@@ -3,15 +3,18 @@ class TodosController < ApplicationController
         @todos = Todo.all
         render json: @todos
     end
+
     def create
-        @todo = Todo.create(params[:todo])
+        @todo = Todo.create(todo_params)
         render json: @todo
     end
+
     def update
         @todo = Todo.find(params[:id])
         @todo.update(params[:todo])
         render json: @todo
     end
+
     def destroy
         @todo = Todo.find(params[:id])
         if @todo.destroy
@@ -19,5 +22,11 @@ class TodosController < ApplicationController
         else
             render json: todo.errors, status: :unprocessable_entity
         end
+    end
+
+    private
+
+    def todo_params
+        params.require(:todo).permit(:title, :description, :priority, :deadline)
     end
 end

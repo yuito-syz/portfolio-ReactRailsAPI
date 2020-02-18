@@ -28,11 +28,33 @@ module Server
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
+    config.i18n.default_locale = :ja
+    config.i18n.available_locales = %i[ja en]
+    config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}')]
+
+    config.generators do |g|
+      g.test_framework false
+      g.helper false
+      g.assets false
+    end
 
     # Only loads a smaller set of middleware suitable for API only apps.
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+    config.session_store :cookie_store, key: '_interslice_session'
+    config.middleware.use ActionDispatch::Cookies # Required for all session management
+    config.middleware.use ActionDispatch::Session::CookieStore, config.session_options
+    config.middleware.use ActionDispatch::Flash
+    config.middleware.insert_before 0, Rack::Cors do
+      allow do
+        origins '*'
+        resource '*',
+                 :headers => :any,
+                 :expose => ['access-token', 'expiry', 'token-type', 'uid', 'client'],
+                 :methods => [:get, :post, :options, :delete, :put]
+      end
+    end
     config.x.cors_allowed_origins = ENV.fetch('CORS_ALLOWED_ORIGINS', 'http://localhost:3000')
   end
 end
