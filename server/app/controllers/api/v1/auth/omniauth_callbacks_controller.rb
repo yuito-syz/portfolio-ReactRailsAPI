@@ -1,5 +1,7 @@
-module Auth
-    class Auth::OmniauthCallbacksController < ApplicationController
+module api
+  module v1
+    module Auth
+      class Auth::OmniauthCallbacksController < ApplicationController
         skip_before_action :skip_session
 
         def redirect_callbacks
@@ -16,7 +18,7 @@ module Auth
         protected
           def get_resource_from_auth_hash
             super
-             # @resource.credentials = auth_hash["credentials"]
+            @resource.credentials = auth_hash["credentials"]
             clean_resource
           end
 
@@ -32,7 +34,7 @@ module Auth
             else
               # @resource.credentials = auth_hash["credentials"]
 
-              # わかりやすい様に開発時はjsonとして結果を返す
+              # 開発時はjsonとして結果を返す
               render json: @resource, status: :ok
             end
           end
@@ -44,6 +46,9 @@ module Auth
           def strip_emoji(str)
             str.encode('SJIS', 'UTF-8', invalid: :replace, undef: :replace, replace: '').encode('UTF-8')
           end
+      end
     end
+  end
 end
+
 
