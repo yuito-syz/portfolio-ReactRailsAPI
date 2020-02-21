@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::API
         include DeviseTokenAuth::Concerns::SetUserByToken
-        protect_from_forgery
+        protect_from_forgery with: :exception
         before_action :skip_session
         skip_before_action :verify_authenticity_token, if: :devise_controller? 
 
